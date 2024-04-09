@@ -3,3 +3,5 @@ pandas
 sklearn
 keras
 tensorflow
+seaborn
+scikit-image
