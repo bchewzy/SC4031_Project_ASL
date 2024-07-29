@@ -9,7 +9,7 @@ import time
 import json
 import mediapipe as mp
 from keras.models import load_model
-from cvzone.HandTrackingModule import HandDetector
+# from cvzone.HandTrackingModule import HandDetector
 
 
 app = Flask(__name__)
@@ -18,8 +18,8 @@ app.config['SECRET_KEY'] = 'sc4031'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load Model
-# model = load_model("../MNIST/models/model_all_alpha_85.h5")
-model = load_model("../MNIST/models/test.h5")
+model = load_model("../MNIST/models/model_all_alpha_85.h5")
+# model = load_model("../MNIST/models/test.h5")
 
 # Retrieve Labels
 labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
@@ -48,6 +48,8 @@ def extract_features(img):
     return features
 
 def predict_letter(img):
+    client_ip = request.remote_addr
+
     frame = img
     h, w, c = frame.shape
     offset = 20
@@ -57,6 +59,7 @@ def predict_letter(img):
         hand_landmarks = results.multi_hand_landmarks
 
         if hand_landmarks:
+            print(f"--- {client_ip}: Hand detected, processing... ---")
             analysis_frame = frame
 
             for hand_lm in hand_landmarks:
@@ -117,7 +120,7 @@ def predict_letter(img):
                 pred_array = np.array(predictions)
                 predicted_class_index = np.argmax(predictions)
 
-                print(predictions)
+                # print(predictions)
 
                 # Map the predicted index to class label
                 predicted_label = labels[predicted_class_index]
